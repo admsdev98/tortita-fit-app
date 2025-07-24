@@ -5,10 +5,10 @@ import Navigation from "../common/Navigation";
 const Header = () => {
   return (
     <div>
-      <div className="flex justify-end p-4">
+      <div className="flex justify-end px-4 py-2">
         <Navigation />
       </div>
-      <div className="flex items-center justify-center p-6 bg-white shadow-sm">
+      <div className="flex items-center justify-center py-4 bg-white shadow-sm">
         <div className="flex items-center space-x-8">
           <div className="flex items-center justify-center">
             <img src={logo} alt="Tu Tortita Fit Logo" className="w-64 h-64 object-contain"/>
