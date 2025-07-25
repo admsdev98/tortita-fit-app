@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 const RecipeCard = ({ recipe }) => {
 
@@ -57,9 +58,12 @@ const RecipeCard = ({ recipe }) => {
         </div>
 
         <div className="mt-auto">
-          <button className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-full transition-colors duration-300 text-sm">
+          <Link 
+            to={`/recipe/${recipe.id}`}
+            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-full transition-colors duration-300 text-sm flex items-center justify-center"
+          >
             Ver Receta
-          </button>
+          </Link>
         </div>
       </div>
     </div>

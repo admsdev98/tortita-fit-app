@@ -8,11 +8,11 @@ const Home = () => {
   return (
     <PageTransition>
       <div className="h-screen overflow-y-scroll snap-y snap-mandatory scroll-smooth">
-        <div className="h-screen snap-start flex flex-col">
+        <div className="h-screen snap-start flex flex-col overflow-hidden">
           <HomeHeader />
           <HomeMain />
         </div>
-        <div className="h-screen snap-start flex items-center justify-center px-4">
+        <div className="h-screen snap-start flex items-center justify-center px-4 overflow-hidden">
           <HomeDescription />
         </div>
       </div>

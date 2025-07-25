@@ -4,7 +4,7 @@ import RecipeCard from './RecipeCard'
 const RecipesGrid = ({ recipes, loading = false }) => {
   if (loading) {
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4 lg:gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-2 md:gap-3 lg:gap-4">
         {[...Array(8)].map((_, index) => (
           <div key={index} className="bg-white rounded-xl sm:rounded-2xl shadow-lg animate-pulse">
             <div className="h-24 sm:h-32 md:h-40 lg:h-48 bg-gray-200 rounded-t-xl sm:rounded-t-2xl"></div>
@@ -35,7 +35,7 @@ const RecipesGrid = ({ recipes, loading = false }) => {
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4 lg:gap-6">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-2 md:gap-3 lg:gap-4">
       {recipes.map((recipe, index) => (
         <div
           key={recipe.id}

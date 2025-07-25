@@ -3,7 +3,7 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import Home from './pages/Home'
 import Recipes from './pages/Recipes'
-import Calculator from './pages/Calculator'
+import RecipeDetail from './pages/RecipeDetail'
 
 function App() {
   const location = useLocation()
@@ -14,7 +14,7 @@ function App() {
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<Home />} />
           <Route path="/recipes" element={<Recipes />} />
-          <Route path="/calculator" element={<Calculator />} />
+          <Route path="/recipe/:id" element={<RecipeDetail />} />
         </Routes>
       </AnimatePresence>
     </div>

@@ -35,13 +35,6 @@ const Navigation = () => {
           >
             Recetas
           </Link>
-          <Link 
-            to="/calculator" 
-            className="block px-6 py-3 text-gray-700 hover:text-orange-500 hover:bg-gray-50 font-chewy text-lg transition-colors duration-200"
-            onClick={() => setIsOpen(false)}
-          >
-            Calculadora de macros
-          </Link>
         </nav>
       </div>
 
