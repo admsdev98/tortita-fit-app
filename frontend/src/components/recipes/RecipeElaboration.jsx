@@ -272,13 +272,6 @@ function StepCarousel({ steps, checked, onCheck, tips, ingredients }) {
             {/* Icono grande minimalista */}
             <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full shadow text-xl sm:text-2xl md:text-3xl mb-2 mx-auto bg-gray-50">
               {icon}
-              {isChecked && (
-                <span className="absolute -top-2 -right-2 bg-green-500 text-white rounded-full w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center shadow-lg animate-bounce">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                </span>
-              )}
             </div>
             {/* Título y tiempo */}
             <div className="text-center font-bold text-sm sm:text-base md:text-lg mb-2 text-gray-800">

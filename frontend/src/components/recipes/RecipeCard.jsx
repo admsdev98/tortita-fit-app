@@ -11,23 +11,10 @@ const RecipeCard = ({ recipe }) => {
           alt={recipe.title}
           className="w-full h-32 sm:h-40 md:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
         />
-        <div className="absolute top-2 left-2 flex items-center space-x-1">
-          <span className="text-yellow-400 text-sm">⭐</span>
-          <span className="text-white text-sm font-semibold bg-black bg-opacity-50 px-2 py-1 rounded-full">
-            {recipe.rating}
-          </span>
-        </div>
-        {recipe.isPopular && (
+        {recipe.is_popular && (
           <div className="absolute bottom-2 left-2">
             <span className="bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full">
               POPULAR
-            </span>
-          </div>
-        )}
-        {recipe.isFeatured && (
-          <div className="absolute bottom-2 right-2">
-            <span className="bg-purple-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-              DESTACADA
             </span>
           </div>
         )}
@@ -45,15 +32,15 @@ const RecipeCard = ({ recipe }) => {
         <div className="flex items-center justify-between mb-3 text-xs sm:text-sm text-gray-500">
           <div className="flex items-center space-x-1">
             <span>⏱️</span>
-            <span>{recipe.totalTime}</span>
-          </div>
-          <div className="flex items-center space-x-1">
-            <span>👥</span>
-            <span>{recipe.servings}</span>
+            <span>{recipe.total_time}</span>
           </div>
           <div className="flex items-center space-x-1">
             <span>🔥</span>
             <span>{recipe.calories} cal</span>
+          </div>
+          <div className="flex items-center space-x-1">
+            <span>📊</span>
+            <span>{recipe.difficulty}</span>
           </div>
         </div>
 

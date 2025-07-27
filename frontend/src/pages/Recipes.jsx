@@ -6,17 +6,16 @@ import RecipeSort from '../components/recipes/RecipeSort'
 import RecipeCard from '../components/recipes/RecipeCard'
 import RecipePagination from '../components/recipes/RecipePagination'
 import PageTransition from '../components/common/PageTransition'
-import { mockRecipes } from '../data/mock/recipes'
+import { useRecipes } from '../hooks/useRecipes'
 import { CATEGORIES, SORT_OPTIONS, RECIPES_PER_PAGE } from '../utils/constants'
 
 const Recipes = () => {
-  const [recipes, setRecipes] = useState(mockRecipes)
-  const [filteredRecipes, setFilteredRecipes] = useState(mockRecipes)
+  const { recipes, loading, error, searchRecipes } = useRecipes()
+  const [filteredRecipes, setFilteredRecipes] = useState([])
   const [selectedCategory, setSelectedCategory] = useState('todos')
   const [searchTerm, setSearchTerm] = useState('')
   const [currentSort, setCurrentSort] = useState('default')
   const [currentPage, setCurrentPage] = useState(1)
-  const [loading, setLoading] = useState(false)
 
   // Estados para los modales laterales
   const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -24,6 +23,11 @@ const Recipes = () => {
   const [isSortModalOpen, setIsSortModalOpen] = useState(false)
   const [tempSelectedCategory, setTempSelectedCategory] = useState('todos')
   const [tempSortSelected, setTempSortSelected] = useState('default')
+
+  // Inicializar filteredRecipes cuando recipes cambie
+  useEffect(() => {
+    setFilteredRecipes(recipes)
+  }, [recipes])
 
   // Bloquear scroll cuando hay modales abiertos
   useEffect(() => {
@@ -43,11 +47,10 @@ const Recipes = () => {
 
     if (selectedCategory !== 'todos') {
       filtered = filtered.filter(recipe => {
-        if (selectedCategory === 'top3') return recipe.isPopular
-        if (selectedCategory === 'pizza') return recipe.subcategory === 'tortipizza'
-        if (selectedCategory === 'hamburguesa') return recipe.subcategory === 'tortiguesa'
-        if (selectedCategory === 'kebab') return recipe.subcategory === 'tortikebab'
-        return recipe.category === selectedCategory
+        if (selectedCategory === 'top3') return recipe.is_popular
+        if (selectedCategory === 'dulce') return recipe.category === 'dulce'
+        if (selectedCategory === 'salado') return recipe.category === 'salado'
+        return false
       })
     }
 
@@ -55,30 +58,16 @@ const Recipes = () => {
       const searchLower = searchTerm.toLowerCase()
       filtered = filtered.filter(recipe =>
         recipe.title.toLowerCase().includes(searchLower) ||
-        recipe.description.toLowerCase().includes(searchLower) ||
-        recipe.tags.some(tag => tag.toLowerCase().includes(searchLower))
+        (recipe.description && recipe.description.toLowerCase().includes(searchLower))
       )
     }
 
     switch (currentSort) {
-      case 'rating':
-        filtered.sort((a, b) => b.rating - a.rating)
-        break
-      case 'time':
-        filtered.sort((a, b) => {
-          const timeA = parseInt(a.totalTime.split(' ')[0])
-          const timeB = parseInt(b.totalTime.split(' ')[0])
-          return timeA - timeB
-        })
-        break
-      case 'calories':
-        filtered.sort((a, b) => a.calories - b.calories)
+      case 'popular':
+        filtered.sort((a, b) => b.visits - a.visits)
         break
       case 'name':
         filtered.sort((a, b) => a.title.localeCompare(b.title))
-        break
-      case 'popular':
-        filtered.sort((a, b) => b.reviews - a.reviews)
         break
       default:
         break
@@ -92,8 +81,11 @@ const Recipes = () => {
     setSelectedCategory(category)
   }
 
-  const handleSearchChange = (term) => {
+  const handleSearchChange = async (term) => {
     setSearchTerm(term)
+    if (term.trim()) {
+      await searchRecipes(term)
+    }
   }
 
   const handleSortChange = (sort) => {
@@ -121,12 +113,18 @@ const Recipes = () => {
 
   // Funciones para los modales laterales
   const handleCategorySelect = (category) => {
-    setTempSelectedCategory(category)
+    setSelectedCategory(category)
+    setIsFilterModalOpen(false) // ← Cerrar modal inmediatamente
   }
 
   const handleApplyFilters = () => {
     setSelectedCategory(tempSelectedCategory)
     setIsFilterModalOpen(false)
+  }
+
+  const handleSortSelect = (sort) => {
+    setCurrentSort(sort)
+    setIsSortModalOpen(false) // ← Cerrar modal inmediatamente
   }
 
   const handleApplySort = () => {
@@ -184,6 +182,7 @@ const Recipes = () => {
             <RecipeFilter
               onFilterChange={handleFilterChange}
               onSearchChange={handleSearchChange}
+              onSortChange={handleSortChange}
             />
 
             <div className="flex items-center justify-start mt-2">
@@ -294,11 +293,11 @@ const Recipes = () => {
         {/* Modal de filtros */}
         <Modal open={isFilterModalOpen} onClose={() => setIsFilterModalOpen(false)}>
           <h3 className="text-xl md:text-2xl font-bold mb-6 text-center">Filtrar recetas</h3>
-          <div className="grid grid-cols-3 md:grid-cols-4 gap-4 md:gap-6 mb-8">
+          <div className="grid grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
             {CATEGORIES.map(category => (
               <button
                 key={category.id}
-                onClick={() => handleCategorySelect(category.id)}
+                onClick={() => handleCategorySelect(category.id)} // ← Aplicar inmediatamente
                 className={`flex flex-col items-center justify-center w-full h-24 md:h-28 rounded-xl border-2 transition-all duration-200
                   ${tempSelectedCategory === category.id ? 'bg-orange-100 border-orange-400 text-orange-600 font-bold scale-105' : 'bg-gray-50 border-gray-200 text-gray-500 hover:bg-gray-100'}`}
               >
@@ -307,40 +306,25 @@ const Recipes = () => {
               </button>
             ))}
           </div>
-          <button
-            onClick={handleApplyFilters}
-            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 md:py-4 rounded-full transition-colors duration-300 text-base md:text-lg mb-2"
-          >
-            Aplicar filtros
-          </button>
+          {/* ← Eliminar botón "Aplicar filtros" */}
         </Modal>
 
         {/* Modal de ordenar */}
         <Modal open={isSortModalOpen} onClose={() => setIsSortModalOpen(false)}>
           <h3 className="text-xl md:text-2xl font-bold mb-6 text-center">Ordenar recetas</h3>
-          <div className="flex flex-col gap-3 md:gap-4 mb-8">
+          <div className="flex flex-col gap-3 md:gap-4">
             {SORT_OPTIONS.map(opt => (
-              <label key={opt.id} className={`flex items-center px-4 md:px-6 py-4 md:py-5 rounded-xl border-2 transition-all duration-200 cursor-pointer hover:scale-105
-                ${tempSortSelected === opt.id ? 'bg-orange-100 border-orange-400 text-orange-600 font-bold' : 'bg-gray-50 border-gray-200 text-gray-500 hover:bg-gray-100'}`}
+              <button 
+                key={opt.id} 
+                onClick={() => handleSortSelect(opt.id)} // ← Aplicar inmediatamente
+                className={`flex items-center px-4 md:px-6 py-4 md:py-5 rounded-xl border-2 transition-all duration-200 cursor-pointer hover:scale-105
+                  ${tempSortSelected === opt.id ? 'bg-orange-100 border-orange-400 text-orange-600 font-bold' : 'bg-gray-50 border-gray-200 text-gray-500 hover:bg-gray-100'}`}
               >
-                <input
-                  type="radio"
-                  name="sortOption"
-                  value={opt.id}
-                  checked={tempSortSelected === opt.id}
-                  onChange={() => setTempSortSelected(opt.id)}
-                  className="mr-4 md:mr-5 accent-orange-500 w-4 h-4 md:w-5 md:h-5"
-                />
                 <span className="text-base md:text-lg">{opt.label}</span>
-              </label>
+              </button>
             ))}
           </div>
-          <button
-            onClick={handleApplySort}
-            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 md:py-4 rounded-full transition-colors duration-300 text-base md:text-lg mb-2"
-          >
-            Aplicar orden
-          </button>
+          {/* ← Eliminar botón "Aplicar orden" */}
         </Modal>
       </div>
     </PageTransition>

@@ -1,8 +1,15 @@
 import React, { useRef, useState } from 'react'
 import { CATEGORIES, SORT_OPTIONS } from '../../utils/constants'
 
-const RecipeFilter = ({ onFilterChange, onSearchChange, desktopMode }) => {
-  const [selectedCategory, setSelectedCategory] = useState('todos')
+const RecipeFilter = ({ onFilterChange, onSearchChange, onSortChange, desktopMode }) => { // ← Añadir onSortChange
+  // Estados para filtros
+  const [currentCategory, setCurrentCategory] = useState('todos')
+  const [tempCategory, setTempCategory] = useState('todos')
+  
+  // Estados para ordenar
+  const [currentSort, setCurrentSort] = useState('default') // ← Nuevo
+  const [tempSort, setTempSort] = useState('default') // ← Nuevo
+  
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
   const [isSortModalOpen, setIsSortModalOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -10,13 +17,38 @@ const RecipeFilter = ({ onFilterChange, onSearchChange, desktopMode }) => {
   const [sortSelected, setSortSelected] = useState('relevancia')
   const searchRef = useRef(null)
 
+  // Funciones para filtros (ya están bien)
   const handleCategorySelect = (category) => {
-    setSelectedCategory(category)
+    setCurrentCategory(category)
+    onFilterChange(category)
+    setIsFilterModalOpen(false)
   }
 
-  const handleApplyFilters = () => {
-    onFilterChange(selectedCategory)
+  const handleOpenFilterModal = () => {
+    setTempCategory(currentCategory)
+    setIsFilterModalOpen(true)
+  }
+
+  const handleCloseFilterModal = () => {
+    setTempCategory(currentCategory)
     setIsFilterModalOpen(false)
+  }
+
+  // Funciones para ordenar (nuevas)
+  const handleSortSelect = (sort) => {
+    setCurrentSort(sort)
+    onSortChange(sort) // ← Aplicar inmediatamente
+    setIsSortModalOpen(false) // ← Cerrar modal
+  }
+
+  const handleOpenSortModal = () => {
+    setTempSort(currentSort)
+    setIsSortModalOpen(true)
+  }
+
+  const handleCloseSortModal = () => {
+    setTempSort(currentSort)
+    setIsSortModalOpen(false)
   }
 
   const handleApplySort = () => {
@@ -36,12 +68,6 @@ const RecipeFilter = ({ onFilterChange, onSearchChange, desktopMode }) => {
         <div className="absolute inset-0 bg-black bg-opacity-30" onClick={onClose} />
         <div className="relative w-full max-w-md bg-white rounded-t-2xl md:rounded-2xl shadow-2xl p-6 pb-8 animate-fadeInUp">
           {children}
-          <button
-            onClick={onClose}
-            className="w-full mt-6 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-full transition-colors duration-300 text-base"
-          >
-            Cerrar
-          </button>
         </div>
       </div>
     ) : null
@@ -72,7 +98,7 @@ const RecipeFilter = ({ onFilterChange, onSearchChange, desktopMode }) => {
         <>
           {/* Embudo (filtros) */}
           <button
-            onClick={() => setIsFilterModalOpen(true)}
+            onClick={handleOpenFilterModal} // ← Usar nueva función
             className={`flex items-center justify-center rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all duration-300 ${desktopMode ? 'w-12 h-12' : 'w-12 h-12'}`}
             aria-label="Abrir filtros"
           >
@@ -82,7 +108,7 @@ const RecipeFilter = ({ onFilterChange, onSearchChange, desktopMode }) => {
           </button>
           {/* Ordenar (flechas verticales) */}
           <button
-            onClick={() => setIsSortModalOpen(true)}
+            onClick={handleOpenSortModal}
             className={`flex items-center justify-center rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all duration-300 ${desktopMode ? 'w-12 h-12' : 'w-12 h-12'}`}
             aria-label="Ordenar"
           >
@@ -104,15 +130,15 @@ const RecipeFilter = ({ onFilterChange, onSearchChange, desktopMode }) => {
         </>
       )}
       {/* Modal de filtros */}
-      <Modal open={isFilterModalOpen} onClose={() => setIsFilterModalOpen(false)}>
+      <Modal open={isFilterModalOpen} onClose={handleCloseFilterModal}>
         <h3 className="text-lg font-bold mb-4 text-center">Filtrar recetas</h3>
-        <div className="grid grid-cols-3 gap-3 mb-6">
+        <div className="grid grid-cols-3 gap-3">
           {CATEGORIES.map(category => (
             <button
               key={category.id}
               onClick={() => handleCategorySelect(category.id)}
               className={`flex flex-col items-center justify-center w-20 h-20 rounded-xl border-2
-                ${selectedCategory === category.id ? 'bg-orange-100 border-orange-400 text-orange-600 font-bold' : 'bg-gray-50 border-gray-200 text-gray-500'}`}
+                ${tempCategory === category.id ? 'bg-orange-100 border-orange-400 text-orange-600 font-bold' : 'bg-gray-50 border-gray-200 text-gray-500'}`}
               style={{ transition: 'none' }}
             >
               <span className="text-2xl mb-1">{category.icon}</span>
@@ -120,39 +146,22 @@ const RecipeFilter = ({ onFilterChange, onSearchChange, desktopMode }) => {
             </button>
           ))}
         </div>
-        <button
-          onClick={handleApplyFilters}
-          className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-full transition-colors duration-300 text-base mb-2"
-        >
-          Aplicar filtros
-        </button>
       </Modal>
-      {/* Modal de ordenar */}
-      <Modal open={isSortModalOpen} onClose={() => setIsSortModalOpen(false)}>
+      {/* Modal de ordenar - SIN botón "Aplicar" */}
+      <Modal open={isSortModalOpen} onClose={handleCloseSortModal}>
         <h3 className="text-lg font-bold mb-4 text-center">Ordenar recetas</h3>
-        <div className="flex flex-col gap-3 mb-6">
+        <div className="flex flex-col gap-3">
           {SORT_OPTIONS.map(opt => (
-            <label key={opt.id} className={`flex items-center px-4 py-3 rounded-xl border-2 transition-all duration-200 cursor-pointer
-              ${sortSelected === opt.id ? 'bg-orange-100 border-orange-400 text-orange-600 font-bold' : 'bg-gray-50 border-gray-200 text-gray-500'}`}
+            <button
+              key={opt.id}
+              onClick={() => handleSortSelect(opt.id)} // ← Cambiar a función nueva
+              className={`flex items-center px-4 py-3 rounded-xl border-2 transition-all duration-200 cursor-pointer
+                ${tempSort === opt.id ? 'bg-orange-100 border-orange-400 text-orange-600 font-bold' : 'bg-gray-50 border-gray-200 text-gray-500'}`}
             >
-              <input
-                type="radio"
-                name="sortOption"
-                value={opt.id}
-                checked={sortSelected === opt.id}
-                onChange={() => setSortSelected(opt.id)}
-                className="mr-3 accent-orange-500"
-              />
               {opt.label}
-            </label>
+            </button>
           ))}
         </div>
-        <button
-          onClick={handleApplySort}
-          className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-full transition-colors duration-300 text-base mb-2"
-        >
-          Aplicar orden
-        </button>
       </Modal>
       <style>{`
         @keyframes fadeInUp {

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { mockRecipes } from '../data/mock/recipes'
-import { mockElaboration } from '../data/mock/elaboration'
+import { recipesService } from '../services/recipesService'
 import RecipeElaboration from '../components/recipes/RecipeElaboration'
 import PageTransition from '../components/common/PageTransition'
 
@@ -13,24 +12,55 @@ const RecipeDetail = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
+  // Función para transformar datos del backend al formato que espera el frontend
+  const transformRecipeData = (backendRecipe) => {
+    const elaborationData = {
+      images: [backendRecipe.image], // Usar la imagen de la receta
+      ingredients: [
+        // Por ahora ingredientes vacíos, luego podemos añadir tabla de ingredientes
+        { name: "Ingredientes en desarrollo", amount: "Ver instrucciones", category: "info" }
+      ],
+      steps: backendRecipe.instructions?.map(instruction => ({
+        step: instruction.step_number,
+        description: instruction.instruction_text,
+        time: "5 min", // Tiempo por defecto, luego podemos añadir tabla de tiempos
+        tips: "Sigue las instrucciones cuidadosamente" // Tips por defecto
+      })) || [],
+      tips: ["Receta en desarrollo", "Más información próximamente"],
+      nutritionInfo: {
+        calories: backendRecipe.calories || 0,
+        protein: "15g", // Por defecto, luego podemos añadir tabla nutricional
+        carbs: "30g",
+        fat: "10g",
+        fiber: "5g",
+        sugar: "8g"
+      }
+    }
+    
+    return elaborationData
+  }
+
   useEffect(() => {
-    const fetchRecipeData = () => {
+    const fetchRecipeData = async () => {
       setLoading(true)
       setError(false)
 
-      // Simular delay de carga
-      setTimeout(() => {
-        const foundRecipe = mockRecipes.find(r => r.id === parseInt(id))
-        const foundElaboration = mockElaboration[parseInt(id)]
+      try {
+        const foundRecipe = await recipesService.getRecipeById(parseInt(id))
 
-        if (foundRecipe && foundElaboration) {
+        if (foundRecipe) {
           setRecipe(foundRecipe)
-          setElaboration(foundElaboration)
+          // Transformar datos del backend al formato esperado
+          const elaborationData = transformRecipeData(foundRecipe)
+          setElaboration(elaborationData)
         } else {
           setError(true)
         }
+      } catch (err) {
+        setError(true)
+      } finally {
         setLoading(false)
-      }, 500)
+      }
     }
 
     fetchRecipeData()
