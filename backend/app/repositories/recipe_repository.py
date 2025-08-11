@@ -2,6 +2,7 @@ from sqlmodel import Session, select
 from app.models.recipe_model import Recipe
 
 from app.db.db import engine
+from agents import function_tool
 
 def get_all_recipes():
     with Session(engine) as session:
@@ -13,6 +14,7 @@ def get_recipe_by_id(id: int):
         recipe = session.exec(select(Recipe).where(Recipe.id == id)).first()
         return recipe   
 
+@function_tool(description_override="Creates a new recipe and saves it to the database.")
 def create_recipe(recipe: Recipe):
     with Session(engine) as session:
         session.add(recipe)
@@ -20,6 +22,7 @@ def create_recipe(recipe: Recipe):
         session.refresh(recipe)
         return recipe
 
+@function_tool(description_override="Updates an existing recipe by its ID.")
 def update_recipe(recipe_id: int, recipe: Recipe):
     with Session(engine) as session:
         session.exec(select(Recipe).where(Recipe.id == recipe_id)).first()

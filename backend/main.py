@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.config import environment
 from app.routes import mcp, recipes
+
 
 app = FastAPI()
 

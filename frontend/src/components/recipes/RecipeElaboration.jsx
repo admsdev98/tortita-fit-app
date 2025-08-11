@@ -218,11 +218,15 @@ function StepCarousel({ steps, checked, onCheck, tips, ingredients }) {
         {isIngredients ? (
           <div className="relative w-full max-w-3xl p-4 sm:p-6 md:p-8 rounded-2xl shadow-xl border border-orange-200 bg-white flex flex-col items-center justify-center mx-auto min-h-[180px] sm:min-h-[200px] md:min-h-[220px]">
             <h3 className="font-bold text-orange-600 mb-3 text-base sm:text-lg">Ingredientes</h3>
-            <ul className="list-disc pl-6 text-gray-700 text-sm sm:text-base space-y-1 sm:space-y-2">
-              {ingredients.map((ing, idx) => (
-                <li key={idx}><span className="font-medium">{ing.name}</span> <span className="text-gray-500">{ing.amount}</span></li>
-              ))}
-            </ul>
+            {ingredients.length === 1 && ingredients[0].name === "Estamos preparando la mejor lista de la compra" ? (
+              <div className="text-gray-500 text-sm sm:text-base">{ingredients[0].name}</div>
+            ) : (
+              <ul className="list-disc pl-6 text-gray-700 text-sm sm:text-base space-y-1 sm:space-y-2">
+                {ingredients.map((ing, idx) => (
+                  <li key={idx}><span className="font-medium">{ing.name}</span> <span className="text-gray-500">{ing.amount}</span></li>
+                ))}
+              </ul>
+            )}
           </div>
         ) : isFinish ? (
           <div className="relative w-full max-w-3xl p-4 sm:p-6 md:p-8 rounded-2xl shadow-xl border border-green-400 bg-white flex flex-col items-center justify-center mx-auto min-h-[180px] sm:min-h-[200px] md:min-h-[220px]">
@@ -468,15 +472,7 @@ function RecipeElaboration({ recipe, elaboration }) {
         <div className="flex items-center justify-center space-x-6 mb-8">
           <div className="flex flex-col items-center">
             <span className="text-lg">⏱️</span>
-            <span className="text-xs text-gray-500">{recipe.totalTime}</span>
-          </div>
-          <div className="flex flex-col items-center">
-            <span className="text-lg">👥</span>
-            <span className="text-xs text-gray-500">{recipe.servings}</span>
-          </div>
-          <div className="flex flex-col items-center">
-            <span className="text-lg">⭐</span>
-            <span className="text-xs text-gray-500">{recipe.rating}</span>
+            <span className="text-xs text-gray-500">{recipe.total_time}</span>
           </div>
         </div>
         {/* Descripción */}

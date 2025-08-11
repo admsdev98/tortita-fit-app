@@ -14,26 +14,30 @@ const RecipeDetail = () => {
 
   // Función para transformar datos del backend al formato que espera el frontend
   const transformRecipeData = (backendRecipe) => {
+    const ingredientsList = backendRecipe.ingredients?.length > 0
+      ? backendRecipe.ingredients.map(ing => ({
+          name: ing.name,
+          amount: `${ing.amount} ${ing.unit}`
+        }))
+      : [{ name: "Estamos preparando la mejor lista de la compra" }]
+
     const elaborationData = {
-      images: [backendRecipe.image], // Usar la imagen de la receta
-      ingredients: [
-        // Por ahora ingredientes vacíos, luego podemos añadir tabla de ingredientes
-        { name: "Ingredientes en desarrollo", amount: "Ver instrucciones", category: "info" }
-      ],
+      images: [backendRecipe.image],
+      ingredients: ingredientsList,
       steps: backendRecipe.instructions?.map(instruction => ({
         step: instruction.step_number,
         description: instruction.instruction_text,
-        time: "5 min", // Tiempo por defecto, luego podemos añadir tabla de tiempos
-        tips: "Sigue las instrucciones cuidadosamente" // Tips por defecto
+        time: "5 min",
+        tips: "Sigue las instrucciones cuidadosamente"
       })) || [],
       tips: ["Receta en desarrollo", "Más información próximamente"],
       nutritionInfo: {
         calories: backendRecipe.calories || 0,
-        protein: "15g", // Por defecto, luego podemos añadir tabla nutricional
-        carbs: "30g",
-        fat: "10g",
-        fiber: "5g",
-        sugar: "8g"
+        protein: backendRecipe.protein !== undefined ? `${backendRecipe.protein}g` : "0g",
+        carbs: backendRecipe.carbs !== undefined ? `${backendRecipe.carbs}g` : "0g",
+        fat: backendRecipe.fat !== undefined ? `${backendRecipe.fat}g` : "0g",
+        fiber: backendRecipe.fiber !== undefined ? `${backendRecipe.fiber}g` : "0g",
+        sugar: backendRecipe.sugar !== undefined ? `${backendRecipe.sugar}g` : "0g"
       }
     }
     
@@ -110,4 +114,4 @@ const RecipeDetail = () => {
   )
 }
 
-export default RecipeDetail 
+export default RecipeDetail

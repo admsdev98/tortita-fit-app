@@ -2,17 +2,21 @@ from sqlmodel import Session, select
 from app.models.user import User
 
 from app.db.db import engine
+from agents import function_tool
 
+@function_tool(description_override="Retrieves all users from the database.")
 def get_all_users():
     with Session(engine) as session:
         user = session.exec(select(User)).all()
         return user
 
+@function_tool(description_override="Retrieves a user by their ID.")
 def get_user_by_id(id: int):
     with Session(engine) as session:
         user = session.exec(select(User).where(User.id == id)).first()
         return user   
 
+@function_tool(description_override="Creates a new user and saves it to the database.")
 def create_user(user: User):
     with Session(engine) as session:
         session.add(user)
@@ -20,6 +24,7 @@ def create_user(user: User):
         session.refresh(user)
         return user
 
+@function_tool(description_override="Updates an existing user by their ID.")
 def update_user(user_id: int, user: User):
     with Session(engine) as session:
         session.exec(select(User).where(User.id == user_id)).first()
@@ -27,7 +32,8 @@ def update_user(user_id: int, user: User):
         session.refresh(user)
         return user
 
+@function_tool(description_override="Retrieves a user by their email address.")
 def get_user_by_email(email: str):
     with Session(engine) as session:
         user = session.exec(select(User).where(User.email == email)).first()
-        return user 
+        return user

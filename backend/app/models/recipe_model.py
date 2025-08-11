@@ -12,6 +12,9 @@ class Recipe(SQLModel, table=True):
     description: Optional[str] = None
     total_time: Optional[str] = Field(default=None, max_length=20)
     calories: Optional[int] = None
+    protein: Optional[float] = Field(default=None)
+    carbs: Optional[float] = Field(default=None)
+    fat: Optional[float] = Field(default=None)
     category: Optional[str] = Field(default=None, max_length=50)
     subcategory: Optional[str] = Field(default=None, max_length=50)
     difficulty: Optional[str] = Field(default=None, max_length=20)

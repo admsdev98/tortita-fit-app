@@ -12,3 +12,5 @@ anthropic==0.7.0
 fastapi-cors==0.0.6
 psycopg2-binary==2.9.9
 alembic==1.12.1 
+anthropic
+openai-agents
