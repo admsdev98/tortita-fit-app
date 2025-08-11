@@ -15,10 +15,7 @@ Lo más interesante de este proyecto, esta en una arquitectura basada en agentes
 
 ## Importante
 
-El sistema está en desarrollo (WIP). La idea es mejorar lo existente, y añadir las siguientes funcionalidades:
-
-- Creación de recetas a petición de usuarios registrados.
-- Creación de recetas en base a un listado de ingredientes de la nevera.
+El sistema está en desarrollo (WIP). La idea es mejorar lo existente, y añadir más funcionalidades para que los usuarios registrados puedan generar sus propias recetas a petición.
 
 ## Tecnologías Utilizadas
 
