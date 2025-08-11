@@ -1,3 +1,35 @@
-# Tu Tortita Fit
+# Tortita Fit App
 
-Una aplicación web de recetas saludables con calculadora de calorías que usa IA para generar contenido diario.
+Work In Progress
+
+## Descripción
+
+Tu Tortita Fit nace de la idea de combiar la comida rapida, con la camida procesada de las famosas fast-food.
+
+Lo más interesante de este proyecto, esta en una arquitectura basada en agentes, subagentes y el protocolo MCP, lo que hace que se generen diariamente nuevas recetas, junto a la información nutricional, listado de ingredientes, generación de imagenes y más cosas con el menor código posible.
+
+## Características
+
+- Generación automática de recetas e imagenes con IA bajo el protocolo MCP
+- Cálculo de calorías y macronutrientes por receta.
+
+## Importante
+
+El sistema está en desarrollo (WIP). La idea es mejorar lo existente, y añadir las siguientes funcionalidades:
+
+- Creación de recetas a petición de usuarios registrados.
+- Creación de recetas en base a un listado de ingredientes de la nevera.
+
+## Tecnologías Utilizadas
+
+**Backend**  
+Python / FastAPI / OpenAI / SQLModel
+
+**Frontend**  
+React / Vite / TailwindCSS / HTTPX
+
+**IA**  
+OpenAI GPT / Multi-Agent Orchestration (MCP)
+
+**Infraestructura**  
+Docker
